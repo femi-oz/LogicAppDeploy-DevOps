@@ -29,7 +29,7 @@
   "resources": [
       {
           "type": "Microsoft.Storage/storageAccounts",
-          "apiVersion": "2020-08-01-preview",
+          "apiVersion": "2019-06-01",
           "name": "[variables('sa')]",
           "location": "[parameters('location')]",
           "sku": {

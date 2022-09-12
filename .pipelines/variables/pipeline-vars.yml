@@ -2,19 +2,19 @@
 
 variables:
 
-  projectName: 'logicappsample'
+  projectName: 'thirdlight'
   suffix: 'dev'
 
   # Resource Group
-  resourceGroupLocation: 'westus'
-  resourceGroupName: 'rg-wus-$(projectName)-$(suffix)'
+  resourceGroupLocation: 'southcentralus'
+  resourceGroupName: 'rg-scu-$(projectName)-$(suffix)'
 
   # Storage - make sure this is unique!
   storageName: 'sa$(projectName)$(suffix)'
   appServicePlanName: 'asp$(projectName)$(suffix)'
 
   #  Logic App
-  logicAppName: 'la-wus-$(projectName)-$(suffix)'
+  logicAppName: 'la-scu-$(projectName)-$(suffix)'
 
   # API Connections - if you change this name, you must change the reference in workflow.json
   blobConnectionName: 'azureblob'

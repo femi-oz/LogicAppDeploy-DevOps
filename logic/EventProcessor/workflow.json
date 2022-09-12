@@ -2,51 +2,254 @@
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
         "actions": {
-            "Response": {
-                "type": "Response",
-                "kind": "http",
+            "Initialize_variable": {
+                "runAfter": {},
+                "type": "InitializeVariable",
                 "inputs": {
-                    "statusCode": 200
-                },
-                "runAfter": {
-                    "Create_blob_(V2)": [
-                        "Succeeded"
+                    "variables": [
+                        {
+                            "name": "message_count",
+                            "type": "integer",
+                            "value": 1
+                        }
                     ]
                 }
             },
-            "Create_blob_(V2)": {
-                "type": "ApiConnection",
+            "Response": {
+                "runAfter": {},
+                "type": "Response",
+                "kind": "Http",
                 "inputs": {
-                    "host": {
-                        "connection": {
-                            "referenceName": "azureblob"
+                    "body": {
+                        "status": "success"
+                    },
+                    "statusCode": 200
+                }
+            },
+            "Terminate": {
+                "runAfter": {
+                    "Until": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Terminate",
+                "inputs": {
+                    "runStatus": "Succeeded"
+                }
+            },
+            "Until": {
+                "actions": {
+                    "Condition": {
+                        "actions": {
+                            "Compose": {
+                                "runAfter": {},
+                                "type": "Compose",
+                                "inputs": "@outputs('Message_Total')"
+                            }
+                        },
+                        "runAfter": {
+                            "Set_variable": [
+                                "Succeeded"
+                            ]
+                        },
+                        "else": {
+                            "actions": {
+                                "Compose_2": {
+                                    "runAfter": {},
+                                    "type": "Compose",
+                                    "inputs": "@outputs('Message_Total')"
+                                },
+                                "For_each": {
+                                    "foreach": "@body('Get_messages_(V2)')?['QueueMessagesList']?['QueueMessage']",
+                                    "actions": {
+                                        "Asset_Content": {
+                                            "runAfter": {
+                                                "Parse_JSON": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "Http",
+                                            "inputs": {
+                                                "method": "GET",
+                                                "uri": "@body('Parse_JSON')?['download_link']"
+                                            }
+                                        },
+                                        "Asset_Payload": {
+                                            "runAfter": {
+                                                "Message_Id": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "Compose",
+                                            "inputs": "@items('For_each')?['MessageText']"
+                                        },
+                                        "Create_blob_from_download": {
+                                            "runAfter": {
+                                                "Asset_Content": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "ApiConnection",
+                                            "inputs": {
+                                                "body": "@body('Asset_Content')",
+                                                "headers": {
+                                                    "ReadFileMetadataFromServer": true
+                                                },
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['azureblob']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "post",
+                                                "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('AccountNameFromSettings'))}/files",
+                                                "queries": {
+                                                    "folderPath": "[concat('/',parameters('storageBlobName'),'/@{body(''Parse_JSON'')?[''asset_type'']}')]",
+                                                    "name": "@body('Parse_JSON')?['file_name']",
+                                                    "queryParametersSingleEncoded": true
+                                                }
+                                            },
+                                            "runtimeConfiguration": {
+                                                "contentTransfer": {
+                                                    "transferMode": "Chunked"
+                                                }
+                                            }
+                                        },
+                                        "Delete_message_(V2)": {
+                                            "runAfter": {
+                                                "Create_blob_from_download": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "ApiConnection",
+                                            "inputs": {
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['azurequeues']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "delete",
+                                                "path": "[concat('/v2/storageAccounts/@{encodeURIComponent(encodeURIComponent(''AccountNameFromSettings''))}/queues/@{encodeURIComponent(''',parameters('storageBlobName'),''')}/messages/@{encodeURIComponent(outputs(''Message_Id''))}')]",
+                                                "queries": {
+                                                    "popreceipt": "@items('For_each')?['PopReceipt']"
+                                                }
+                                            }
+                                        },
+                                        "Message_Id": {
+                                            "runAfter": {},
+                                            "type": "Compose",
+                                            "inputs": " @{items('For_each')?['MessageId']}"
+                                        },
+                                        "Parse_JSON": {
+                                            "runAfter": {
+                                                "Asset_Payload": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "ParseJson",
+                                            "inputs": {
+                                                "content": "@outputs('Asset_Payload')",
+                                                "schema": {
+                                                    "properties": {
+                                                        "asset_type": {
+                                                            "type": "string"
+                                                        },
+                                                        "download_link": {
+                                                            "type": "string"
+                                                        },
+                                                        "file_name": {
+                                                            "type": "string"
+                                                        },
+                                                        "filesize": {
+                                                            "type": "string"
+                                                        },
+                                                        "mime": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "runAfter": {
+                                        "Compose_2": [
+                                            "Succeeded"
+                                        ]
+                                    },
+                                    "type": "Foreach"
+                                }
+                            }
+                        },
+                        "expression": {
+                            "and": [
+                                {
+                                    "equals": [
+                                        "@variables('message_count')",
+                                        0
+                                    ]
+                                }
+                            ]
+                        },
+                        "type": "If"
+                    },
+                    "Get_messages_(V2)": {
+                        "runAfter": {},
+                        "type": "ApiConnection",
+                        "inputs": {
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azurequeues']['connectionId']"
+                                }
+                            },
+                            "method": "get",
+                            "path": "[concat('/v2/storageAccounts/@{encodeURIComponent(encodeURIComponent(''AccountNameFromSettings''))}/queues/@{encodeURIComponent(''', parameters('storageBlobName'),''')}/messages')]",
+                            "queries": {
+                                "numofmessages": "15"
+                            }
                         }
                     },
-                    "method": "post",
-                    "body": "@triggerBody()",
-                    "headers": {
-                        "ReadFileMetadataFromServer": true
+                    "Message_Total": {
+                        "runAfter": {
+                            "Get_messages_(V2)": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "Compose",
+                        "inputs": " @{length(body('Get_messages_(V2)')?['QueueMessagesList']?['QueueMessage'])}"
                     },
-                    "path": "/v2/datasets/@{encodeURIComponent(encodeURIComponent('sacb34ucffd7en6'))}/files",
-                    "queries": {
-                        "folderPath": "/blobs",
-                        "name": "@{utcNow()}",
-                        "queryParametersSingleEncoded": true
+                    "Set_variable": {
+                        "runAfter": {
+                            "Message_Total": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "SetVariable",
+                        "inputs": {
+                            "name": "message_count",
+                            "value": "@int(outputs('Message_Total'))"
+                        }
                     }
                 },
-                "runAfter": {},
-                "runtimeConfiguration": {
-                    "contentTransfer": {
-                        "transferMode": "Chunked"
-                    }
-                }
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "expression": "@equals(variables('message_count'), 0)",
+                "limit": {
+                    "count": 200,
+                    "timeout": "PT1H"
+                },
+                "type": "Until"
             }
         },
         "triggers": {
             "manual": {
                 "type": "Request",
                 "kind": "Http",
-                "inputs": {}
+                "inputs": {
+                    "method": "GET"
+                }
             }
         },
         "contentVersion": "1.0.0.0",
