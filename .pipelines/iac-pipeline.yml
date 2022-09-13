@@ -7,6 +7,9 @@ variables:
   value: deploy_artifacts
 - name: devEnvironment
   value: dev
+# name of your Azure service connection
+- name: servuceConnectionName
+  value: TEST-logicAPPConnection
 
 stages:
 - stage: Builds
@@ -32,5 +35,4 @@ stages:
   - template: templates/template-iac-logicapp.yml
     parameters:
       environment: $(devEnvironment)
-      # TODO: Fill in with the name of your Azure service connection
-      serviceConnection: ''
+      serviceConnection: $(serviceConnectionName)
