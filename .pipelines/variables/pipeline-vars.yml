@@ -7,7 +7,7 @@ variables:
 
   # Resource Group
   resourceGroupLocation: 'southcentralus'
-  resourceGroupName: 'rg-scu-$(projectName)-$(suffix)'
+  resourceGroupName: 'myAuthResourceGroup'
 
   # Storage - make sure this is unique!
   storageName: 'sa$(projectName)$(suffix)'
