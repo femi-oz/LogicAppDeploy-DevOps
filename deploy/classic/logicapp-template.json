@@ -56,7 +56,8 @@
   },
 
   "variables": {
-     "ServicePrincipalForDevOpsSoftwareEngineeringReleaseAdmins": "a6644e15-b187-4665-a019-899ae4c83586",
+  
+    "ServicePrincipalForDevOpsSoftwareEngineeringReleaseAdmins": "a6644e15-b187-4665-a019-899ae4c83586",
 
     "keyvaultAttributes": {
       "properties": {
@@ -94,8 +95,8 @@
       "name": "[parameters('storageName')]",
       "location": "[parameters('location')]",
       "tags": {
-          "CostCenter": "[parameters('costCenter')]",
-          "CreatedBy": "[parameters('createdBy')]",
+          "CostCenter": "[parameters('CostCenter')]",
+          "CreatedBy": "[parameters('CreatedBy')]",
           "DisplayName": "Storage",
           "Environment": "[parameters('environmentName')]",
           "Layer": "storage",

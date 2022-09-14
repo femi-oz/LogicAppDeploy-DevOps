@@ -10,7 +10,7 @@ jobs:
 - deployment: deploy_logicapp_resources
   displayName: Deploy Logic App Resources
   pool:
-    vmImage: ubuntu-18.04
+    vmImage: latest
   environment: ${{ parameters.environment }}
   variables:
     deploymentMode: 'Incremental'
@@ -35,9 +35,9 @@ jobs:
               -logicAppName $(logicAppName)
               -appServicePlanName $(appServicePlanName)
               -storageName $(storageName)
-              -CreatedBy $(createdBy)
-              -CostCenter $(costCenter)
-              -Owner $(ownerName)
+              -createdBy $(createdBy)
+              -costCenter $(costCenter)
+              -ownerName $(ownerName)
               -keyVaultName $(keyVaultName)'
             deploymentMode: $(deploymentMode)
             deploymentOutputs: 'LogicAppArmOutputs'
