@@ -21,3 +21,11 @@ variables:
 
   # Project artifacts
   logicAppCIArtifactName: 'logicapp_publish_artifact'
+
+  # Resouce Tags
+  costCenter: '701'
+  createdBy: 'Azure DevOps'
+  ownerName: 'Software Engineering'
+    
+  # The name of Storage container & Storage queue to be created"
+  storageContainerQueueName: 'processed-items'
