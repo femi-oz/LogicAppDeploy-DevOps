@@ -34,11 +34,11 @@ jobs:
               -projectName $(projectName)
               -logicAppName $(logicAppName)
               -appServicePlanName $(appServicePlanName)
-              -storageName $(storageName)'
-              -CreatedBy $(createdBy)'
-              -CostCenter $(costCenter)'
-              -Owner $(ownerName)'
-              -keyVaultName $(keyVaultName)'
+              -storageName $(storageName)
+              -CreatedBy $(createdBy)
+              -CostCenter $(costCenter)
+              -Owner $(ownerName)
+              -keyVaultName $(keyVaultName)
             deploymentMode: $(deploymentMode)
             deploymentOutputs: 'LogicAppArmOutputs'
 
