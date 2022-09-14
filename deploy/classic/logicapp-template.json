@@ -8,6 +8,15 @@
         "description": "The datacenter to use for the deployment."
       }
     },
+    "costCenter": {
+      "type": "string"
+    },
+    "ownerName": {
+      "type": "string"
+    },
+    "createdBy": {
+      "type": "string"
+    },
     "environmentName": {
       "type": "string"
     },
@@ -36,6 +45,41 @@
     "skuTier": {
       "type": "string",
       "defaultValue": "Standard"
+    },
+    "keyVaultName": {
+      "type": "string"
+    },
+    "retentionPolicy": {
+      "type": "int",
+      "defaultValue": 7
+    }
+  },
+
+  "variables": {
+     "ServicePrincipalForDevOpsSoftwareEngineeringReleaseAdmins": "a6644e15-b187-4665-a019-899ae4c83586",
+
+    "keyvaultAttributes": {
+      "properties": {
+        "tenantId": "[subscription().tenantId]",
+        "sku": {
+          "name": "Standard",
+          "family": "A"
+        },
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[variables('ServicePrincipalForDevOpsSoftwareEngineeringReleaseAdmins')]",
+            "permissions": {
+              "keys": [ "All" ],
+              "secrets": [ "All" ],
+              "certificates": [ "All" ]
+            }
+          }
+        ],
+        "enabledForDeployment": true,
+        "enabledForDiskEncryption": true,
+        "enabledForTemplateDeployment": true
+      }
     }
   },
   "resources": [
@@ -50,8 +94,13 @@
       "name": "[parameters('storageName')]",
       "location": "[parameters('location')]",
       "tags": {
-        "Environment": "[parameters('environmentName')]",
-        "Project": "[parameters('projectName')]"
+          "CostCenter": "[parameters('costCenter')]",
+          "CreatedBy": "[parameters('createdBy')]",
+          "DisplayName": "Storage",
+          "Environment": "[parameters('environmentName')]",
+          "Layer": "storage",
+          "Owner": "[parameters('ownerName')]",
+          "ProjectName": "[parameters('projectName')]"
       }
     },
     {
@@ -151,7 +200,47 @@
         },
         "clientAffinityEnabled": false
       }
-    }
+    },
+          {
+        "name": "[parameters('keyVaultName')]",
+        "type": "Microsoft.Keyvault/vaults",
+        "apiVersion": "2016-10-01",
+        "location": "[resourceGroup().location]",
+        "tags": {
+          "CostCenter": "[parameters('costCenter')]",
+          "CreatedBy": "[parameters('createdBy')]",
+          "DisplayName": "KeyVault",
+          "Environment": "[parameters('environmentName')]",
+          "Layer": "security",
+          "Owner": "[parameters('ownerName')]",
+          "ProjectName": "[parameters('projectName')]"
+        },
+        
+        "properties": "[variables('keyvaultAttributes').properties]",
+        "resources": [
+          {
+            "type": "providers/diagnosticSettings",
+            "name": "Microsoft.Insights/service",
+            "dependsOn": [
+              "[resourceId('Microsoft.Keyvault/vaults/', parameters('keyVaultName'))]"
+            ],
+            "apiVersion": "2016-09-01",
+            "properties": {
+              "storageAccountId": "[resourceId('Microsoft.Storage/storageAccounts/', parameters('storageName'))]",
+              "logs": [
+                {
+                  "category": "AuditEvent",
+                  "enabled": true,
+                  "retentionPolicy": {
+                    "days": "[parameters('retentionPolicy')]",
+                    "enabled": true
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
   ],
   "outputs": {
     "logicAppSystemAssignedIdentityTenantId": {
