@@ -8,13 +8,13 @@
         "description": "The datacenter to use for the deployment."
       }
     },
-    "CostCenter": {
+    "costCenter": {
       "type": "string"
     },
-    "Owner": {
+    "ownerName": {
       "type": "string"
     },
-    "CreatedBy": {
+    "createdBy": {
       "type": "string"
     },
     "environmentName": {
@@ -99,7 +99,7 @@
           "DisplayName": "Storage",
           "Environment": "[parameters('environmentName')]",
           "Layer": "storage",
-          "Owner": "[parameters('Owner')]",
+          "Owner": "[parameters('ownerName')]",
           "ProjectName": "[parameters('projectName')]"
       }
     },
@@ -113,7 +113,7 @@
           "CreatedBy": "[parameters('createdBy')]",
           "Environment": "[parameters('environmentName')]",
           "Layer": "web",
-          "Owner": "[parameters('Owner')]",
+          "Owner": "[parameters('ownerName')]",
           "ProjectName": "[parameters('projectName')]"
       },
       "sku": {
@@ -136,8 +136,12 @@
         "type": "SystemAssigned"
       },
       "tags": {
-        "Environment": "[parameters('environmentName')]",
-        "Project": "[parameters('projectName')]"
+          "CostCenter": "[parameters('costCenter')]",
+          "CreatedBy": "[parameters('createdBy')]",
+          "Environment": "[parameters('environmentName')]",
+          "Layer": "web",
+          "Owner": "[parameters('Owner')]",
+          "ProjectName": "[parameters('projectName')]"
       },
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
@@ -205,18 +209,18 @@
         "clientAffinityEnabled": false
       }
     },
-          {
+    {
         "name": "[parameters('keyVaultName')]",
         "type": "Microsoft.Keyvault/vaults",
         "apiVersion": "2016-10-01",
-        "location": "[resourceGroup().location]",
+        "location": "[parameters('location')]",
         "tags": {
           "CostCenter": "[parameters('costCenter')]",
           "CreatedBy": "[parameters('createdBy')]",
           "DisplayName": "KeyVault",
           "Environment": "[parameters('environmentName')]",
           "Layer": "security",
-          "Owner": "[parameters('Owner')]",
+          "Owner": "[parameters('ownerName')]",
           "ProjectName": "[parameters('projectName')]"
         },
         

@@ -41,7 +41,7 @@
   "variables": {
       "sa": "[parameters('storageName')]",
       "kv": "[parameters('keyVaultName')]",
-        "apiConnDisplayName": "Thirdlight-KeyVault"
+      "apiConnDisplayName": "Thirdlight-KeyVault"
   },
   "resources": [
       {
