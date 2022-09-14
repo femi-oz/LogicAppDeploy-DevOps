@@ -38,7 +38,7 @@ jobs:
               -CreatedBy $(createdBy)
               -CostCenter $(costCenter)
               -Owner $(ownerName)
-              -keyVaultName $(keyVaultName)
+              -keyVaultName $(keyVaultName)'
             deploymentMode: $(deploymentMode)
             deploymentOutputs: 'LogicAppArmOutputs'
 
