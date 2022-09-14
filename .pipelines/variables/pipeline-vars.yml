@@ -7,7 +7,7 @@ variables:
 
   # Resource Group
   resourceGroupLocation: 'southcentralus'
-  resourceGroupName: 'dev-thirdlight-southcentral'
+  resourceGroupName: 'myAuthResourceGroup'
 
   # Storage - make sure this is unique!
   storageName: 'sa$(projectName)$(suffix)'
