@@ -109,8 +109,12 @@
       "name": "[parameters('appServicePlanName')]",
       "location": "[parameters('location')]",
       "tags": {
-        "Environment": "[parameters('environmentName')]",
-        "Project": "[parameters('projectName')]"
+          "CostCenter": "[parameters('costCenter')]",
+          "CreatedBy": "[parameters('createdBy')]",
+          "Environment": "[parameters('environmentName')]",
+          "Layer": "web",
+          "Owner": "[parameters('Owner')]",
+          "ProjectName": "[parameters('projectName')]"
       },
       "sku": {
         "name": "WS1",

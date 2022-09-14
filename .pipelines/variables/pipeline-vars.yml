@@ -10,7 +10,7 @@ variables:
   resourceGroupName: 'myAuthResourceGroup'
 
   # Storage - make sure this is unique!
-  storageName: 'saxxxx$(projectName)$(suffix)'
+  storageName: 'sa$(projectName)$(suffix)'
   appServicePlanName: 'asp$(projectName)$(suffix)'
 
     #  Key Vault
@@ -22,7 +22,7 @@ variables:
   # API Connections - if you change this name, you must change the reference in workflow.json
   blobConnectionName: 'blobApiConn-scu-$(projectName)-$(suffix)'
   queueConnectionName: 'queueApiConn-scu-$(projectName)-$(suffix)'
-  kvApiConnectionName: 'kvApiConn-scu-$(projectName)-$(suffix)'
+  keyvaultConnectionName: 'kvApiConn-scu-$(projectName)-$(suffix)'
 
   # Project artifacts
   logicAppCIArtifactName: 'logicapp_publish_artifact'

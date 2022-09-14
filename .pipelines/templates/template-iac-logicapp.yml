@@ -61,7 +61,7 @@ jobs:
               -location $(resourceGroupLocation)
               -connections_azureblob_name $(blobConnectionName)
               -connections_azurequeue_name $(queueConnectionName)
-              -connections_keyvault_name $(kvApiConnectionName)
+              -connections_keyvault_name $(keyvaultConnectionName)
               -storageContainerQueueName $(storageContainerQueueName)
               -logicAppSystemAssignedIdentityTenantId $(logicAppSystemAssignedIdentityTenantId)
               -logicAppSystemAssignedIdentityObjectId $(logicAppSystemAssignedIdentityObjectId)'
@@ -82,6 +82,7 @@ jobs:
             scriptLocation: 'inlineScript'
             inlineScript: |
               az functionapp config appsettings set --name $(LAname) --resource-group  $(resourceGroupName) --settings "BLOB_CONNECTION_RUNTIMEURL=$(blobendpointurl)"
+              az functionapp config appsettings set --name $(LAname) --resource-group  $(resourceGroupName) --settings "QUEUE_CONNECTION_RUNTIMEURL=$(queueendpointurl)"
               az functionapp config appsettings set --name $(LAname) --resource-group  $(resourceGroupName) --settings "WORKFLOWS_RESOURCE_GROUP_NAME=$(resourceGroupName)"
             addSpnToEnvironment: true
             useGlobalConfig: true
