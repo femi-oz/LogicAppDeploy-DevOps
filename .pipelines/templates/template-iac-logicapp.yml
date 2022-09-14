@@ -31,14 +31,13 @@ jobs:
             overrideParameters: '
               -location $(resourceGroupLocation)
               -environmentName ${{ parameters.environment }}
-              -projectName $(projectName)
-              -logicAppName $(logicAppName)
-              -appServicePlanName $(appServicePlanName)
-              -storageName $(storageName)
               -createdBy $(createdBy)
               -costCenter $(costCenter)
               -ownerName $(ownerName)
-              -keyVaultName $(keyVaultName)'
+              -projectName $(projectName)
+              -logicAppName $(logicAppName)
+              -appServicePlanName $(appServicePlanName)
+              -storageName $(storageName)'
             deploymentMode: $(deploymentMode)
             deploymentOutputs: 'LogicAppArmOutputs'
 
@@ -77,7 +76,7 @@ jobs:
 
         - task: AzureCLI@2
           inputs:
-            azureSubscription: 'TEST-logicAPPConnection'
+            azureSubscription: 'devconnection2'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
             inlineScript: |

@@ -5,34 +5,37 @@ variables:
   projectName: 'thirdlight'
   suffix: 'dev'
 
+  # Resouce Tags
+  costCenter: '701'
+  createdBy: 'Azure DevOps'
+  ownerName: 'Software Engineering'
+
   # Resource Group
   resourceGroupLocation: 'southcentralus'
   resourceGroupName: 'myAuthResourceGroup'
 
-  # Storage - make sure this is unique!
+  # Storage
   storageName: 'sa$(projectName)$(suffix)'
   appServicePlanName: 'asp$(projectName)$(suffix)'
 
-    #  Key Vault
+  #  Key Vault
   keyVaultName: 'kv-scu-$(projectName)-$(suffix)'
 
   #  Logic App
   logicAppName: 'la-scu-$(projectName)-$(suffix)'
 
-  # API Connections - if you change this name, you must change the reference in workflow.json
+  # API Connections
   blobConnectionName: 'blobApiConn-scu-$(projectName)-$(suffix)'
   queueConnectionName: 'queueApiConn-scu-$(projectName)-$(suffix)'
   keyvaultConnectionName: 'kvApiConn-scu-$(projectName)-$(suffix)'
 
+  # The name of Storage container & Storage queue to be created"
+  storageContainerQueueName: 'processed-items'
+
   # Project artifacts
   logicAppCIArtifactName: 'logicapp_publish_artifact'
 
-  # Resouce Tags
-  costCenter: '701'
-  createdBy: 'Azure DevOps'
-  ownerName: 'Software Engineering'
+
     
-  # The name of Storage container & Storage queue to be created"
-  storageContainerQueueName: 'processed-items'
 
   
