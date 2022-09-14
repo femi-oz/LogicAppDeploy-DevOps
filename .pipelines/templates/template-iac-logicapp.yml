@@ -38,6 +38,7 @@ jobs:
               -logicAppName $(logicAppName)
               -appServicePlanName $(appServicePlanName)
               -storageName $(storageName)'
+              -keyVaultName $(keyVaultName)'
             deploymentMode: $(deploymentMode)
             deploymentOutputs: 'LogicAppArmOutputs'
 
