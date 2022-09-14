@@ -10,7 +10,7 @@ jobs:
 - deployment: deploy_logicapp_resources
   displayName: Deploy Logic App Resources
   pool:
-    vmImage: latest
+    vmImage: 20.04
   environment: ${{ parameters.environment }}
   variables:
     deploymentMode: 'Incremental'
