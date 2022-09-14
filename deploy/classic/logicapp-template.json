@@ -8,13 +8,13 @@
         "description": "The datacenter to use for the deployment."
       }
     },
-    "costCenter": {
+    "CostCenter": {
       "type": "string"
     },
-    "ownerName": {
+    "Owner": {
       "type": "string"
     },
-    "createdBy": {
+    "CreatedBy": {
       "type": "string"
     },
     "environmentName": {
@@ -99,7 +99,7 @@
           "DisplayName": "Storage",
           "Environment": "[parameters('environmentName')]",
           "Layer": "storage",
-          "Owner": "[parameters('ownerName')]",
+          "Owner": "[parameters('Owner')]",
           "ProjectName": "[parameters('projectName')]"
       }
     },
@@ -212,7 +212,7 @@
           "DisplayName": "KeyVault",
           "Environment": "[parameters('environmentName')]",
           "Layer": "security",
-          "Owner": "[parameters('ownerName')]",
+          "Owner": "[parameters('Owner')]",
           "ProjectName": "[parameters('projectName')]"
         },
         
