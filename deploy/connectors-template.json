@@ -1,5 +1,5 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
       "location": {
@@ -14,56 +14,30 @@
       "logicAppSystemAssignedIdentityObjectId": {
           "type": "string"
       },
-      "sa_name": {
+      "storageName": {
           "defaultValue": "sa",
           "type": "string"
-      }, 
+      },
+        "storageContainerQueueName": {
+          "type": "string"
+      },
       "connections_azureblob_name": {
           "defaultValue": "azureblob",
+          "type": "string"
+      },
+        "connections_azurequeue_name": {
+          "defaultValue": "azurequeue",
           "type": "string"
       }
   },
   "variables": {
-      "sa": "[concat(toLower(parameters('sa_name')), uniqueString(resourceGroup().id))]"
+      "sa": "[parameters('storageName')]"
   },
   "resources": [
       {
-          "type": "Microsoft.Storage/storageAccounts",
-          "apiVersion": "2019-06-01",
-          "name": "[variables('sa')]",
-          "location": "[parameters('location')]",
-          "sku": {
-              "name": "Standard_LRS",
-              "tier": "Standard"
-          },
-          "kind": "Storage",
-          "properties": {
-              "networkAcls": {
-                  "bypass": "AzureServices",
-                  "virtualNetworkRules": [],
-                  "ipRules": [],
-                  "defaultAction": "Allow"
-              },
-              "supportsHttpsTrafficOnly": true,
-              "encryption": {
-                  "services": {
-                      "file": {
-                          "keyType": "Account",
-                          "enabled": true
-                      },
-                      "blob": {
-                          "keyType": "Account",
-                          "enabled": true
-                      }
-                  },
-                  "keySource": "Microsoft.Storage"
-              }
-          }
-      },
-      {
           "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
           "apiVersion": "2018-02-01",
-          "name": "[concat(variables('sa'), '/default/blobs')]",
+          "name": "[concat(variables('sa'), '/default/' [parameters('storageContainerQueueName')])]",
           "dependsOn": [
               "[resourceId('Microsoft.Storage/storageAccounts', variables('sa'))]"
           ],
@@ -110,13 +84,65 @@
                   }
               }
           }
+      },
+      {
+            "type": "Microsoft.Storage/storageAccounts/queueServices/queues",
+            "apiVersion": "2021-09-01",
+            "name": "[concat(variables('sa'), '/default/' [parameters('storageContainerQueueName')])]",
+            "properties": {
+                "metadata": {}
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "name": "[parameters('connections_azurequeue_name')]",
+            "apiVersion": "2016-06-01",
+            "location": "[resourceGroup().location]",
+            "kind": "v1",
+            "properties": {
+                "api": {
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/providers/Microsoft.Web/locations/',parameters('location'),'/managedApis/azurequeues')]"
+                },
+                "parameterValueSet": {
+                "name": "keyBasedAuth",
+                    "values": {
+                        "storageaccount": {
+                            "value": "[variables('sa')]"
+                         },
+                         "sharedkey": {
+                            "value": "[listKeys(variables('sa'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+   
+                         }
+                    }
+                }
+            }
+    },      {
+          "type": "Microsoft.Web/connections/accessPolicies",
+          "apiVersion": "2016-06-01",
+          "name": "[concat(parameters('connections_azurequeue_name'),'/',parameters('logicAppSystemAssignedIdentityObjectId'))]",
+          "location": "[parameters('location')]",
+          "dependsOn": [
+              "[resourceId('Microsoft.Web/connections', parameters('connections_azurequeue_name'))]"
+          ],
+          "properties": {
+              "principal": {
+                  "type": "ActiveDirectory",
+                  "identity": {
+                      "tenantId": "[parameters('logicAppSystemAssignedIdentityTenantId')]",
+                      "objectId": "[parameters('logicAppSystemAssignedIdentityObjectId')]"
+                  }
+              }
+          }
       }
- 
   ],
   "outputs": {
     "blobendpointurl": {
       "type": "string",
       "value": "[reference(resourceId('Microsoft.Web/connections', parameters('connections_azureblob_name')),'2016-06-01', 'full').properties.connectionRuntimeUrl]"
+    },
+    "queueendpointurl": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Web/connections', parameters('connections_azurequeue_name')),'2016-06-01', 'full').properties.connectionRuntimeUrl]"
     }
   }
 }
