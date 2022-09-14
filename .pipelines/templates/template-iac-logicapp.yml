@@ -76,7 +76,7 @@ jobs:
 
         - task: AzureCLI@2
           inputs:
-            azureSubscription: 'devconnection2'
+            azureSubscription: 'TEST-logicAPPConnection'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
             inlineScript: |
