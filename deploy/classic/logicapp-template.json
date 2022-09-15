@@ -229,7 +229,7 @@
         "resources": [
           {
             "type": "providers/diagnosticSettings",
-            "name": "Microsoft.Insights/service",
+            "name": "Microsoft.Iansights/service",
             "dependsOn": [
               "[resourceId('Microsoft.Keyvault/vaults/', parameters('keyVaultName'))]"
             ],

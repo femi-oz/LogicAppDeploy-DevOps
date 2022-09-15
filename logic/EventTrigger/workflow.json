@@ -7,7 +7,7 @@
                     "body": "demo content",
                     "host": {
                         "workflow": {
-                            "id": "eventprocessor"
+                            "id": "eventprocessors"
                         }
                     }
                 },
